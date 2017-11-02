@@ -1,28 +1,17 @@
 import os
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+POSTGRES = {
+    'user': 'vinayakvivek',
+    'pw': '',
+    'db': 'db_project',
+    'host': 'localhost',
+    'port': '5432',
+}
 
+DEBUG = True
+SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://%(user)s:\
+%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 
-class Config(object):
-    DEBUG = False
-    TESTING = False
-    CSRF_ENABLED = True
-    SECRET_KEY = 'this-really-needs-to-be-change'
-    SQLALCHEMY_DATABASE_URI = "postgresql://localhost:5370/db_project"
-
-
-class ProductionConfig(Config):
-    DEBUG = False
-
-
-class StagingConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
-
-
-class DevelopmentConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
-
-
-class TestingConfig(Config):
-    TESTING = True
+SQLALCHEMY_TRACK_MODIFICATIONS = False
