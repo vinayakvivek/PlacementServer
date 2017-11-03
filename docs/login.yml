@@ -7,26 +7,42 @@ description: ""
 operationId: "login"
 consumes:
 - "application/json"
-- "application/xml"
 produces:
-- "application/xml"
 - "application/json"
 parameters:
-- name: "type"
-  in: "body"
-  description: "type of the user (student/IC/company)"
+- in: "body"
+  name: "body"
+  description: "Login request"
   required: true
-  type: "integer"
-- name: "username"
-  in: "body"
-  description: "username"
-  required: true
-  type: "string"
-- name: "password"
-  in: "body"
-  description: "password"
-  required: true
-  type: "string"
+  schema:
+    $ref: "#/definitions/Login"
 responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+        schema:
+          type: "object"
+          properties:
+            status:
+              type: "string"
+              description: "Login status"
+            data:
+              type: "string"
+              description: "error if status is false"
   405:
     description: "Invalid input"
+
+definitions:
+  Login:
+    type: "object"
+    properties:
+      username:
+        name: "user1"
+        type: "string"
+      password:
+        type: "string"
+      type:
+        type: "integer"
+    xml:
+      name: "Login"
