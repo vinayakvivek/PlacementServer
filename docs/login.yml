@@ -1,0 +1,32 @@
+Login endpoint
+---
+tags:
+- "login"
+summary: "Login request"
+description: ""
+operationId: "login"
+consumes:
+- "application/json"
+- "application/xml"
+produces:
+- "application/xml"
+- "application/json"
+parameters:
+- name: "type"
+  in: "body"
+  description: "type of the user (student/IC/company)"
+  required: true
+  type: "integer"
+- name: "username"
+  in: "body"
+  description: "username"
+  required: true
+  type: "string"
+- name: "password"
+  in: "body"
+  description: "password"
+  required: true
+  type: "string"
+responses:
+  405:
+    description: "Invalid input"
