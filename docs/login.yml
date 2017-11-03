@@ -21,15 +21,8 @@ responses:
     description: "Login status"
     content:
       application/json:
-        schema:
-          type: "object"
-          properties:
-            status:
-              type: "string"
-              description: "Login status"
-            data:
-              type: "string"
-              description: "error if status is false"
+    schema:
+      $ref: "#/definitions/ResponseData"       
   405:
     description: "Invalid input"
 
@@ -38,11 +31,24 @@ definitions:
     type: "object"
     properties:
       username:
-        name: "user1"
+        example: "1"
         type: "string"
       password:
+        example: "user1"
         type: "string"
       type:
+        example: 0
         type: "integer"
     xml:
       name: "Login"
+  ResponseData:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        description: "Login status"
+        example: "false"
+      data:
+        example: "Invalid credentials"
+        type: "string"
+        description: "error if status is false"

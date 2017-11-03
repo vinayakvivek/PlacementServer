@@ -1,0 +1,46 @@
+Login endpoint
+---
+tags:
+- "login"
+summary: "Student Index Page"
+description: ""
+operationId: "student"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "Student data"
+    content:
+      application/json:
+    schema:
+      $ref: "#/definitions/ResponseData"          
+  405:
+    description: "Invalid input"
+
+definitions:
+  Student:
+    type: "object"
+    properties:
+      name:
+        example: "messi"
+        type: "string"
+      rollno:
+        example: "1"
+        type: "string"
+      cpi:
+        example: 9.82
+        type: "number"
+      dept_name:
+        example: "CSE"
+        type: "string"
+  ResponseData:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        description: "Login status"
+        example: "true"
+      data:
+        $ref: "#/definitions/Student"

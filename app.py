@@ -85,6 +85,23 @@ def login():
 
     return jsonify(data)
 
+@app.route('/student', methods=['POST'])
+@swag_from('docs/student.yml')
+def student():
+  data = ""
+  status = ""
+  if not session['username']:
+    status = "false"
+    data = "Invalid Session"
+  else:
+    username = session['username']
+    data = username
+    status = "true"
+
+  return jsonify({
+      'data': data,
+      'status': status
+    })
 
 if __name__ == '__main__':
     app.run(threaded=True, host=URL, port=int(PORT))
