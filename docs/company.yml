@@ -1,0 +1,38 @@
+Company endpoint
+---
+tags:
+- "company"
+summary: "Company Page"
+description: ""
+operationId: "company"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "Company data"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "status"
+          example: "true"
+        data:
+          $ref: "#/definitions/Company"
+  405:
+    description: "Invalid input"
+
+definitions:
+  Company:
+    type: "object"
+    properties:
+      name:
+        example: "Rakuten"
+        type: "string"
+      email:
+        example: "rak@gmail.com"
+        type: "string"
