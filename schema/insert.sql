@@ -23,3 +23,6 @@ insert into company values(nextval('company_id'),'Qatar','qat@gmail.com','compan
 insert into company values(nextval('company_id'),'samsung','sam@gmail.com','company4');
 insert into company values(nextval('company_id'),'apple','app@gmail.com','company5');
 
+insert into time_slot values(nextval('time_slot_id'),TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-05-16 20:36:38');
+
+insert into jaf values(1,1,'TestJaf','Intern',10000,9.00,1,1);
