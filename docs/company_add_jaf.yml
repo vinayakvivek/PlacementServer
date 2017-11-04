@@ -27,9 +27,9 @@ responses:
         status:
           type: "string"
           description: "JAF insertion status"
-          example: "false"
+          example: "true"
         data:
-          example: "Invalid session"
+          example: "successfully added new JAF"
           type: "string"
           description: "error if status is false"
   405:

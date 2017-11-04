@@ -87,7 +87,7 @@ def login():
 
             if(user_type == 2):
                 query = """
-                        select id 
+                        select id
                         from company
                         where email = %s
                         """
@@ -351,7 +351,7 @@ def company():
         try:
             query = """
                     select name,email
-                    from company 
+                    from company
                     where id = %s
                     """
             res = list(conn.execute(query,(company_id, )).first())
@@ -363,7 +363,7 @@ def company():
         except:
             data = "Database error"
             status = "false"
-            
+
     return jsonify({
         'data': data,
         'status': status
@@ -417,7 +417,7 @@ def add_jaf():
         except:
             status = "false"
             data = "database error"
-            
+
     return jsonify({
         'data': data,
         'status': status
@@ -440,7 +440,7 @@ def company_register():
                 insert into company(name,email,password)
                 values(%s,%s,%s)
                 """
-        conn.execute(query,(company_name,company_email,company_password))
+        conn.execute(query, (company_name, company_email, company_password))
         data = "Company registered"
         status = "true"
     except:

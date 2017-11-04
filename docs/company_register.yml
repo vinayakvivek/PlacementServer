@@ -1,7 +1,7 @@
 Register endpoint
 ---
 tags:
-- "auth"
+- "company"
 summary: "Register request"
 description: ""
 operationId: "register"
@@ -27,9 +27,9 @@ responses:
         status:
           type: "string"
           description: "Login status"
-          example: "false"
+          example: "true"
         data:
-          example: "Invalid credentials"
+          example: "Company registered"
           type: "string"
           description: "error if status is false"
   405:
