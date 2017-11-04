@@ -15,19 +15,15 @@ responses:
     content:
       application/json:
     schema:
-      $ref: "#/definitions/ResponseData"
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "logout status"
+          example: "false"
+        data:
+          example: "Invalid session"
+          type: "string"
+          description: "error if status is false"
   405:
     description: "Invalid input"
-
-definitions:
-  ResponseData:
-    type: "object"
-    properties:
-      status:
-        type: "string"
-        description: "logout status"
-        example: "false"
-      data:
-        example: "Invalid session"
-        type: "string"
-        description: "error if status is false"

@@ -39,7 +39,10 @@ conn = engine.connect()
 
 @app.route('/')
 def hello():
-    return str(db.engine.execute('select * from department').first())
+    return jsonify({
+        'data': "PlacementAPI: Invalid request",
+        'status': "false"
+    })
 
 
 @app.route('/login', methods=['POST'])
@@ -127,8 +130,19 @@ def student():
         status = "false"
         data = "User is not a student"
     else:
-        username = session['username']
-        data = username
+        rollno = session['username']
+        query = """
+            select S.name, S.cpi, D.name
+            from student as S, department as D
+            where S.rollno = %s and
+                  S.dept_id = D.id
+            """
+        res = list(conn.execute(query, (rollno, )).first())
+        data = {
+            'name': res[0],
+            'cpi': float(res[1]),
+            'dept': res[2]
+        }
         status = "true"
 
     return jsonify({

@@ -13,15 +13,15 @@ create sequence if not exists company_id start 1;
 
 
 CREATE TABLE department(
-  id  int primary key default nextval('dept_id'),
+  id  INT PRIMARY KEY DEFAULT nextval('dept_id'),
   name VARCHAR(30)
 );
 
 CREATE TABLE student(
   rollno  VARCHAR(10),
   name    VARCHAR(30),
-  cpi     numeric(4,2),
-  dept_id int,
+  cpi     NUMERIC(4,2),
+  dept_id INT,
   PRIMARY KEY(rollno),
   FOREIGN KEY (dept_id) references department(id)
     ON DELETE CASCADE
@@ -30,7 +30,7 @@ CREATE TABLE student(
 );
 
 CREATE TABLE ic(
-  id  int primary key default nextval('ic_id'),
+  id  INT PRIMARY KEY DEFAULT nextval('ic_id'),
   rollno VARCHAR(10),
   FOREIGN KEY (rollno) references student(rollno)
     ON DELETE CASCADE
@@ -39,9 +39,19 @@ CREATE TABLE ic(
 );
 
 CREATE TABLE company(
-  id  int primary key default nextval('company_id'),
+  id  INT PRIMARY KEY DEFAULT nextval('company_id'),
   name VARCHAR(30),
-  email VARCHAR(30) unique,
+  email VARCHAR(30) UNIQUE,
   password VARCHAR(20)
 );
+
+CREATE TABLE resume(
+  rollno VARCHAR(10) PRIMARY KEY,
+  resume_file BYTEA,
+  verified_ic INT,
+  FOREIGN KEY (rollno) references student(rollno)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  FOREIGN KEY (verified_ic) references ic(id)
+)
 

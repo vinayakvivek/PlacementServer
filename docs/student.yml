@@ -15,7 +15,14 @@ responses:
     content:
       application/json:
     schema:
-      $ref: "#/definitions/ResponseData"
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "status"
+          example: "true"
+        data:
+          $ref: "#/definitions/Student"
   405:
     description: "Invalid input"
 
@@ -35,12 +42,3 @@ definitions:
       dept_name:
         example: "CSE"
         type: "string"
-  ResponseData:
-    type: "object"
-    properties:
-      status:
-        type: "string"
-        description: "Login status"
-        example: "true"
-      data:
-        $ref: "#/definitions/Student"
