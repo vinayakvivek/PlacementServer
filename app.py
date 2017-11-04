@@ -166,7 +166,7 @@ def resume_upload():
         data = "User is not a student"
     else:
         request_data = request.get_json()
-        resume_file = bytes(request_data['resume_file'], "utf-8")
+        resume_file = bytes(request_data['resume_file'])
 
         rollno = session['username']
 
@@ -200,20 +200,60 @@ def resume_upload():
         except:
             status = "false"
             data = "database error"
-
-            # query = """
-            #     select resume_file
-            #     from resume
-            #     where rollno = %s
-            #     """
-            # res = list(conn.execute(query, (rollno, )).first())
-            # print(bytes(res[0]))
-
+            
     return jsonify({
         'data': data,
         'status': status
     })
 
+@app.route('/student/resume/', methods=['POST'])
+@swag_from('docs/student_resume.yml')
+def student_resume():
+  data = ""
+  status = ""
+  if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+  elif session['user_type'] != 0:
+      # logged in user is not a student
+      status = "false"
+      data = "User is not a student"
+  else:
+      try:
+          rollno = session['username']
+          print(rollno)
+          query = """
+                select count(*)
+                from resume where
+                rollno = %s
+                """
+          res = list(conn.execute(query, (rollno, )).first())
+          # print(res[0])
+          if(res[0] == 0):
+            status = "false"
+            data = "No resume uploaded"
+
+          else:
+            query = """
+                    select resume_file
+                    from resume where
+                    rollno = %s
+                    """
+            res = list(conn.execute(query, (rollno, )).first())
+            status = "true"
+            data = {
+             'resume_file' : str(res[0])
+             }
+
+      except:
+        data = "Database error"
+        status = "false"
+
+  return jsonify({
+        'data': data,
+        'status': status
+    })
 
 @app.route('/student/resume/status', methods=['GET'])
 @swag_from('docs/student_resume_status.yml')
