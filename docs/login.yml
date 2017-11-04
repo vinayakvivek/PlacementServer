@@ -1,7 +1,7 @@
 Login endpoint
 ---
 tags:
-- "login"
+- "auth"
 summary: "Login request"
 description: ""
 operationId: "login"

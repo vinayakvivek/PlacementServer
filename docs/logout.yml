@@ -1,7 +1,7 @@
 Logout endpoint
 ---
 tags:
-- "logout"
+- "auth"
 summary: "Logout request"
 description: ""
 operationId: "logout"

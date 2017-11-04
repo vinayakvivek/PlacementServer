@@ -151,5 +151,69 @@ def student():
     })
 
 
+@app.route('/student/resume/upload', methods=['POST'])
+@swag_from('docs/student_resume_upload.yml')
+def resume_upload():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        request_data = request.get_json()
+        resume_file = bytes(request_data['resume_file'], "utf-8")
+
+        rollno = session['username']
+
+        try:
+            query = """
+                select count(*)
+                from resume
+                where rollno = %s
+                """
+            res = list(conn.execute(query, (rollno, )).first())
+            if (res[0] == 0):
+                # student has no existing resume
+                query = """
+                    insert into
+                    resume(rollno, resume_file)
+                    values(%s, %s)
+                    """
+                conn.execute(query, (rollno, resume_file))
+                data = "successfully added resume"
+            else:
+                # resume already exists, so update it
+                query = """
+                    update resume
+                    set resume_file = %s
+                    where rollno = %s
+                    """
+                conn.execute(query, (resume_file, rollno, ))
+                data = "successfully updated resume"
+
+            status = "true"
+        except:
+            status = "false"
+            data = "database error"
+
+            # query = """
+            #     select resume_file
+            #     from resume
+            #     where rollno = %s
+            #     """
+            # res = list(conn.execute(query, (rollno, )).first())
+            # print(bytes(res[0]))
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
 if __name__ == '__main__':
     app.run(threaded=True, host=URL, port=int(PORT))

@@ -1,3 +1,4 @@
+drop table if exists resume;
 drop table if exists company;
 drop table if exists ic;
 drop table if exists student;
