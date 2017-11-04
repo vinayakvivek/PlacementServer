@@ -1,0 +1,50 @@
+Register endpoint
+---
+tags:
+- "auth"
+summary: "Register request"
+description: ""
+operationId: "register"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "Register request"
+  required: true
+  schema:
+    $ref: "#/definitions/Register"
+responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "Login status"
+          example: "false"
+        data:
+          example: "Invalid credentials"
+          type: "string"
+          description: "error if status is false"
+  405:
+    description: "Invalid input"
+
+definitions:
+  Register:
+    type: "object"
+    properties:
+      name:
+        example: "Rakuten"
+        type: "string"
+      password:
+        example: "company1"
+        type: "string"
+      email:
+        example: "rak@gmail.com"
+        type: "string"

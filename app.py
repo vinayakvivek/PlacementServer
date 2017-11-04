@@ -75,7 +75,7 @@ def login():
             username_col = "id"
         elif user_type == 2:
             table = "company"
-            username_col = "id"
+            username_col = "email"
 
         query = "select count(*) from {} where {} = %s and password = %s"\
                 .format(table, username_col)
@@ -84,8 +84,22 @@ def login():
         if (res[0] == 1):
             status = "true"
             data = ""
-            session['username'] = username
-            session['user_type'] = user_type
+
+            if(user_type == 2):
+                query = """
+                        select id 
+                        from company
+                        where email = %s
+                        """
+                res = list(conn.execute(query,(username,) ).first())
+
+                session['username'] = res[0]
+                session['user_type'] = user_type
+
+            else:
+                session['username'] = username
+                session['user_type'] = user_type
+
         else:
             status = "false"
             data = "Error: Invalid credentials"
@@ -349,11 +363,40 @@ def company():
         except:
             data = "Database error"
             status = "false"
-            
+
     return jsonify({
         'data': data,
         'status': status
     })
+
+@app.route('/company/register/', methods=['POST'])
+@swag_from('docs/company_register.yml')
+def company_register():
+    data = ""
+    status = ""
+
+    request_data = request.get_json()
+    company_name = request_data['name']
+    company_email = request_data['email']
+    company_password = request_data['password']
+
+    try:
+        query = """
+                insert into company(name,email,password)
+                values(%s,%s,%s)
+                """
+        conn.execute(query,(company_name,company_email,company_password))
+        data = "Company registered"
+        status = "true"
+    except:
+        data = "Company Email already used"
+        status = "false"
+
+    return jsonify({
+        'data': data,
+        'status': status
+        })
+
 
 if __name__ == '__main__':
     app.run(threaded=True, host=URL, port=int(PORT))
