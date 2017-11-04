@@ -1,7 +1,7 @@
-Login endpoint
+Student endpoint
 ---
 tags:
-- "login"
+- "student"
 summary: "Student Index Page"
 description: ""
 operationId: "student"
@@ -15,7 +15,7 @@ responses:
     content:
       application/json:
     schema:
-      $ref: "#/definitions/ResponseData"          
+      $ref: "#/definitions/ResponseData"
   405:
     description: "Invalid input"
 

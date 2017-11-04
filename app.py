@@ -82,9 +82,30 @@ def login():
             status = "true"
             data = ""
             session['username'] = username
+            session['user_type'] = user_type
         else:
             status = "false"
             data = "Error: Invalid credentials"
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
+@app.route('/logout', methods=['POST'])
+@swag_from('docs/logout.yml')
+def logout():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        status = "false"
+        data = "Invalid Session"
+    else:
+        session.pop('username', None)
+        session.pop('user_type', None)
+        status = "true"
+        data = ""
 
     return jsonify({
         'data': data,
@@ -98,8 +119,13 @@ def student():
     data = ""
     status = ""
     if 'username' not in session:
+        # no user has logged in
         status = "false"
         data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
     else:
         username = session['username']
         data = username
