@@ -2,14 +2,14 @@ import os
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-URL = '192.168.0.108'
+URL = 'localhost'
 PORT = '5000'
 POSTGRES = {
-    'user': 'rajat',
+    'user': 'vinayakvivek',
     'pw': '',
     'db': 'db_project',
     'host': 'localhost',
-    'port': '5370',
+    'port': '5432',
 }
 
 DEBUG = True

@@ -1,12 +1,13 @@
 from flask import Flask, jsonify, request, session
 from flask.ext.sqlalchemy import SQLAlchemy
-# from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy import create_engine, MetaData
 from flasgger import Swagger
 from flasgger import swag_from
-from config import URL, PORT
+from local import URL, PORT, SQLALCHEMY_DATABASE_URI
+
 
 app = Flask(__name__)
-app.config.from_pyfile('config.py')
+app.config.from_pyfile('local.py')
 
 template = {
   "swagger": "2.0",
@@ -31,6 +32,10 @@ swagger = Swagger(app, template=template)
 db = SQLAlchemy(app)
 db.init_app(app)
 
+engine = create_engine(SQLALCHEMY_DATABASE_URI, convert_unicode=True)
+metadata = MetaData(bind=engine)
+conn = engine.connect()
+
 
 @app.route('/')
 def hello():
@@ -40,24 +45,22 @@ def hello():
 @app.route('/login', methods=['POST'])
 @swag_from('docs/login.yml')
 def login():
-    data = {
-        'status': "",
-        'data': ""
-    }
+    data = ""
+    status = ""
 
     request_data = request.get_json()
 
-    username = request_data['username']
-    password = request_data['password']
-    user_type = int(request_data['type'])
-
-    if not username:
-        data['data'] = "no username"
-    elif not password:
-        data['data'] = "no password"
-    elif not type:
-        data['data'] = "no type"
+    if 'username' not in request_data:
+        data = "no username"
+    elif 'password' not in request_data:
+        data = "no password"
+    elif 'type' not in request_data:
+        data = "no type"
     else:
+        username = request_data['username']
+        password = request_data['password']
+        user_type = int(request_data['type'])
+
         table = ""
         username_col = ""
         if user_type == 0:
@@ -71,37 +74,42 @@ def login():
             table = "company"
             username_col = "id"
 
-        query = "select count(*) from %s where %s = '%s' and password = '%s'" %\
-            (table, username_col, username, password)
+        query = "select count(*) from {} where {} = %s and password = %s"\
+                .format(table, username_col)
 
-        res = list(db.engine.execute(query).first())
+        res = list(conn.execute(query, (username, password, )).first())
         if (res[0] == 1):
-            data['status'] = "true"
-            data['data'] = ""
+            status = "true"
+            data = ""
             session['username'] = username
         else:
-            data['status'] = "false"
-            data['data'] = "Error: Invalid credentials"
+            status = "false"
+            data = "Error: Invalid credentials"
 
-    return jsonify(data)
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
 
 @app.route('/student', methods=['POST'])
 @swag_from('docs/student.yml')
 def student():
-  data = ""
-  status = ""
-  if not session['username']:
-    status = "false"
-    data = "Invalid Session"
-  else:
-    username = session['username']
-    data = username
-    status = "true"
+    data = ""
+    status = ""
+    if 'username' not in session:
+        status = "false"
+        data = "Invalid Session"
+    else:
+        username = session['username']
+        data = username
+        status = "true"
 
-  return jsonify({
-      'data': data,
-      'status': status
+    return jsonify({
+        'data': data,
+        'status': status
     })
+
 
 if __name__ == '__main__':
     app.run(threaded=True, host=URL, port=int(PORT))
