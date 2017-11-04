@@ -319,5 +319,41 @@ def resume_status():
     })
 
 
+@app.route('/company/', methods=['GET'])
+@swag_from('docs/company.yml')
+def company():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 2:
+        # logged in user is not a company
+        status = "false"
+        data = "User is not a company"
+    else:
+        company_id = session['username']
+        try:
+            query = """
+                    select name,email
+                    from company 
+                    where id = %s
+                    """
+            res = list(conn.execute(query,(company_id, )).first())
+            data = {
+                'name':res[0],
+                'email':res[1]
+            }
+            status = "true"
+        except:
+            data = "Database error"
+            status = "false"
+            
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
 if __name__ == '__main__':
     app.run(threaded=True, host=URL, port=int(PORT))
