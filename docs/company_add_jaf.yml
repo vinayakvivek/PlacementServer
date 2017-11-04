@@ -1,0 +1,56 @@
+Company Add JAF endpoint
+---
+tags:
+- "company"
+summary: "Add JAF request"
+description: ""
+operationId: "company_add_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "add jaf request"
+  required: true
+  schema:
+    $ref: "#/definitions/JAF"
+responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "JAF insertion status"
+          example: "false"
+        data:
+          example: "Invalid session"
+          type: "string"
+          description: "error if status is false"
+  405:
+    description: "Invalid input"
+
+definitions:
+  JAF:
+    type: "object"
+    properties:
+      jaf_no:
+        example: 2
+        type: "integer"
+      name:
+        example: "JAF name"
+        type: "string"
+      description:
+        example: "example JAF description"
+        type: "string"
+      stipend:
+        example: 20000
+        type: "integer"
+      cpi_cutoff:
+        example: 9.00
+        type: "number"
