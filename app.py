@@ -215,5 +215,69 @@ def resume_upload():
     })
 
 
+@app.route('/student/resume/status', methods=['GET'])
+@swag_from('docs/student_resume_status.yml')
+def resume_status():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        rollno = session['username']
+
+        try:
+            # check if resume exists
+            query = """
+                select count(*)
+                from resume
+                where rollno = %s
+                """
+            res = list(conn.execute(query, (rollno, )).first())
+            if (res[0] == 0):
+                data = "no resume"
+                status = "false"
+            else:
+                query = """
+                    select verified_ic
+                    from resume
+                    where rollno = %s
+                    """
+                res = list(conn.execute(query, (rollno, )).first())
+                if res[0] is None:
+                    # not verified
+                    data = {
+                        'is_verified': "false",
+                        'verified_ic': ""
+                    }
+                else:
+                    verified_ic = int(res[0])
+                    query = """
+                        select name
+                        from ic, student
+                        where ic.id = %s::smallint
+                            and ic.rollno = student.rollno
+                        """
+                    res = list(conn.execute(query, (verified_ic, )).first())
+                    data = {
+                        'is_verified': "true",
+                        'verified_ic': res[0]
+                    }
+                status = "true"
+        except:
+            status = "false"
+            data = "database error"
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
 if __name__ == '__main__':
     app.run(threaded=True, host=URL, port=int(PORT))

@@ -1,0 +1,38 @@
+Student resume status endpoint
+---
+tags:
+- "student"
+summary: "Student Resume Status"
+description: ""
+operationId: "student_resume_status"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "Student Resume status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "status"
+          example: "true"
+        data:
+          $ref: "#/definitions/ResumeVerification"
+  405:
+    description: "Invalid input"
+
+definitions:
+  ResumeVerification:
+    type: "object"
+    properties:
+      is_verified:
+        example: "true"
+        type: "string"
+      verified_ic:
+        example: "someone"
+        type: "string"
