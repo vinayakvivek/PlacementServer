@@ -1,0 +1,40 @@
+Company view signed students endpoint
+---
+tags:
+- "company"
+summary: "View students who signed a JAF"
+description: ""
+operationId: "company_view_signed_students"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "jaf_no"
+  required: true
+  schema:
+    type: "object"
+      properties:
+        jaf_no:
+          example: 1
+          type: "integer"
+responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "JAF insertion status"
+          example: "true"
+        data:
+          example: "successfully added new JAF"
+          type: "string"
+          description: "error if status is false"
+  405:
+    description: "Invalid input"

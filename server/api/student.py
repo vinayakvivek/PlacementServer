@@ -294,7 +294,7 @@ def student_sign_jaf():
         status = "false"
         data = "User is not a student"
     else:
-        try:   
+        try:
             rollno = session['username']
             request_data = request.get_json()
             company_id = request_data['company_id']
@@ -303,19 +303,32 @@ def student_sign_jaf():
             query = """
                     select count(*)
                     from signedjafs
-                    where 
-                    company_id = %s and jaf_no = %s
+                    where company_id = %s
+                        and jaf_no = %s
+                        and rollno = %s
                     """
-            res = list(conn.execute(query, (company_id, jaf_no)).first())
+            res = list(conn.execute(query, (company_id, jaf_no, rollno)).first())
             if res[0] == 0:
+
+                # now check if JAF exists
                 query = """
-                        insert into 
-                        signedjafs(rollno,company_id,jaf_no)
-                        values(%s,%s,%s)
-                        """
-                conn.execute(query, (rollno, company_id, jaf_no));
-                data = "JAF Signed"
-                status = "true"
+                    select count(*)
+                    from jaf
+                    where company_id = %s and jaf_no = %s
+                    """
+                res = list(conn.execute(query, (company_id, jaf_no)).first())
+                if (res[0] == 1):
+                    query = """
+                            insert into
+                            signedjafs(rollno, company_id, jaf_no)
+                            values(%s,%s,%s)
+                            """
+                    conn.execute(query, (rollno, company_id, jaf_no))
+                    data = "JAF Signed"
+                    status = "true"
+                else:
+                    data = "JAF does not exist"
+                    status = "false"
             else:
                 data = "JAF already signed"
                 status = "false"
@@ -328,4 +341,3 @@ def student_sign_jaf():
         'data': data,
         'status': status
     })
-

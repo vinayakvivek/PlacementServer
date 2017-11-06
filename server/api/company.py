@@ -212,4 +212,28 @@ def comapany_view_jafs():
 # @company_blueprint.route('/company/jaf/students', methods=['POST'])
 # @swag_from('docs/company_signed_students.yml')
 # def comapany_view_signed_students():
-#     pass
+#     data = ""
+#     status = ""
+#     if 'username' not in session:
+#         # no user has logged in
+#         status = "false"
+#         data = "Invalid Session"
+#     elif session['user_type'] != 2:
+#         # logged in user is not a company
+#         status = "false"
+#         data = "User is not a company"
+#     else:
+#         company_id = session['username']
+
+#         request_data = request.get_json()
+#         jaf_no = int(request_data['jaf_no'])
+
+#         query = """
+#             select
+#             """
+
+
+#     return jsonify({
+#         'data': data,
+#         'status': status
+#     })
