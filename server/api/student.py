@@ -241,7 +241,8 @@ def student_view_jafs():
                         jaf_no, jaf.name,
                         description,
                         stipend,
-                        cpi_cutoff
+                        cpi_cutoff,
+                        company.id
                     from jaf natural join eligibility
                             join company on company_id = company.id
                     where dept_id =%s
@@ -256,8 +257,8 @@ def student_view_jafs():
                         and company_id = %s
                         and jaf_no = %s
                     """
-                res = list(conn.execute(sub_query, (rollno, int(row[6]), int(row[1]))).first())
-                is_signedup = False if res[0] == 0 else True
+                res2 = list(conn.execute(sub_query, (rollno, int(row[6]), int(row[1]))).first())
+                is_signedup = False if res2[0] == 0 else True
                 data.append({
                         'company_name': row[0],
                         'jaf_no': row[1],
@@ -282,4 +283,49 @@ def student_view_jafs():
 @student_blueprint.route('/student/sign_jaf', methods=['POST'])
 @swag_from('docs/student_sign_jaf.yml')
 def student_sign_jaf():
-    pass
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        try:   
+            rollno = session['username']
+            request_data = request.get_json()
+            company_id = request_data['company_id']
+            jaf_no = request_data['jaf_no']
+
+            query = """
+                    select count(*)
+                    from signedjafs
+                    where 
+                    company_id = %s and jaf_no = %s
+                    """
+            res = list(conn.execute(query, (company_id, jaf_no)).first())
+            if res[0] == 0:
+                query = """
+                        insert into 
+                        signedjafs(rollno,company_id,jaf_no)
+                        values(%s,%s,%s)
+                        """
+                conn.execute(query, (rollno, company_id, jaf_no));
+                data = "JAF Signed"
+                status = "true"
+            else:
+                data = "JAF already signed"
+                status = "false"
+
+        except:
+            data = "database error"
+            status = "false"
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
