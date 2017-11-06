@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import jsonify, request, session
 from flasgger import swag_from
 
-from app import conn
+from server import conn
 
 student_blueprint = Blueprint('student_blueprint', __name__)
 
@@ -203,6 +203,59 @@ def resume_status():
         except:
             status = "false"
             data = "database error"
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+@student_blueprint.route('/student/jafs', methods=['GET'])
+@swag_from('docs/student_jafs.yml')
+def student_view_jafs():
+    data = []
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        rollno = session['username']
+        try: 
+            query = """
+                 select dept_id,cpi 
+                 from student 
+                 where rollno = %s
+                 """
+            res = list(conn.execute(query, (rollno, )).first())
+            dept_id = int(res[0])
+            cpi = float(res[1])
+
+            query = """
+                    select company.name, jaf_no, jaf.name, description, stipend, cpi_cutoff
+                    from jaf natural join eligibility 
+                            join company on company_id = company.id 
+                    where dept_id =%s 
+                        and cpi_cutoff <= %s;
+                    """
+            res = conn.execute(query, (dept_id,cpi))
+            for row in res:
+                data.append({
+                        'company_name' : row[0],
+                        'jaf_no' : row[1],
+                        'jaf_name' : row[2],
+                        'description' : row[3],
+                        'stipend' : row[4],
+                        'cpi_cutoff' : float(row[5])
+                    })
+            status = "true"
+
+        except:
+            data = "database error"
+            status = "false"
 
     return jsonify({
         'data': data,

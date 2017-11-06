@@ -1,0 +1,76 @@
+Company JAFS endpoint
+---
+tags:
+- "student"
+summary: "View Jafs"
+description: ""
+operationId: "company_view_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "View JAFS"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "true"
+        data:
+          $ref: "#/definitions/JAFS"
+  405:
+    description: "Invalid input"
+
+definitions:
+  JAF1:
+    type: "object"
+    properties:
+      company_name:
+        example: "company1"
+        type: "string"
+      jaf_no:
+        example: 2
+        type: "integer"
+      jaf_name:
+        example: "JAF name"
+        type: "string"
+      description:
+        example: "example JAF description"
+        type: "string"
+      stipend:
+        example: 20000
+        type: "integer"
+      cpi_cutoff:
+        example: 9.00
+        type: "number"
+  JAF2:
+    type: "object"
+    properties:
+      company_name:
+        example: "company1"
+        type: "string"
+      jaf_no:
+        example: 2
+        type: "integer"
+      jaf_name:
+        example: "JAF name2"
+        type: "string"
+      description:
+        example: "example JAF2 description"
+        type: "string"
+      stipend:
+        example: 40000
+        type: "integer"
+      cpi_cutoff:
+        example: 8.00
+        type: "number"
+  JAFS:
+    type: "array"
+    items:
+      $ref: "#/definitions/JAF1"
+      $ref: "#/definitions/JAF2"
+
