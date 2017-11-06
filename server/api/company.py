@@ -209,31 +209,68 @@ def comapany_view_jafs():
     })
 
 
-# @company_blueprint.route('/company/jaf/students', methods=['POST'])
-# @swag_from('docs/company_signed_students.yml')
-# def comapany_view_signed_students():
-#     data = ""
-#     status = ""
-#     if 'username' not in session:
-#         # no user has logged in
-#         status = "false"
-#         data = "Invalid Session"
-#     elif session['user_type'] != 2:
-#         # logged in user is not a company
-#         status = "false"
-#         data = "User is not a company"
-#     else:
-#         company_id = session['username']
+@company_blueprint.route('/company/jaf/students', methods=['POST'])
+@swag_from('docs/company_signed_students.yml')
+def comapany_view_signed_students():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 2:
+        # logged in user is not a company
+        status = "false"
+        data = "User is not a company"
+    else:
+        company_id = session['username']
 
-#         request_data = request.get_json()
-#         jaf_no = int(request_data['jaf_no'])
+        try:
+            request_data = request.get_json()
+            jaf_no = int(request_data['jaf_no'])
 
-#         query = """
-#             select
-#             """
+            # check if jaf exists
+            query = """
+                select count(*)
+                from jaf
+                where company_id = %s and jaf_no = %s
+                """
+            res = list(conn.execute(query, (company_id, jaf_no)).first())
+            if (res[0] == 1):
+                query = """
+                    select
+                        student.name,
+                        cpi,
+                        department.name,
+                        is_shortlisted,
+                        date_signed
+                    from signedjafs natural join student, department
+                    where company_id = %s
+                        and jaf_no = %s
+                        and department.id = dept_id
+                    """
+                res = conn.execute(query, (company_id, jaf_no))
+                data = []
+                for row in res:
+                    data.append({
+                            'name': row[0],
+                            'cpi': float(row[1]),
+                            'dept': row[2],
+                            'is_shortlisted': bool(row[3]),
+                            'date_signed': row[4]
+                        })
+                status = "true"
+            else:
+                status = "false"
+                data = "JAF does not exists"
+        except KeyError:
+            status = "false"
+            data = "bad request"
+        except:
+            status = "false"
+            data = "database error"
 
-
-#     return jsonify({
-#         'data': data,
-#         'status': status
-#     })
+    return jsonify({
+        'data': data,
+        'status': status
+    })
