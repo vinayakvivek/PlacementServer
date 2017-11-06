@@ -209,6 +209,7 @@ def resume_status():
         'status': status
     })
 
+
 @student_blueprint.route('/student/jafs', methods=['GET'])
 @swag_from('docs/student_jafs.yml')
 def student_view_jafs():
@@ -224,10 +225,10 @@ def student_view_jafs():
         data = "User is not a student"
     else:
         rollno = session['username']
-        try: 
+        try:
             query = """
-                 select dept_id,cpi 
-                 from student 
+                 select dept_id,cpi
+                 from student
                  where rollno = %s
                  """
             res = list(conn.execute(query, (rollno, )).first())
@@ -236,13 +237,18 @@ def student_view_jafs():
 
 
             query = """
-                    select company.name, jaf_no, jaf.name, description, stipend, cpi_cutoff, company.id
-                    from jaf natural join eligibility 
-                            join company on company_id = company.id 
-                    where dept_id =%s 
+                    select
+                        company.name,
+                        jaf_no, jaf.name,
+                        description,
+                        stipend,
+                        cpi_cutoff
+                    from jaf natural join eligibility
+                            join company on company_id = company.id
+                    where dept_id =%s
                         and cpi_cutoff <= %s;
                     """
-            res = conn.execute(query, (dept_id,cpi))
+            res = conn.execute(query, (dept_id, cpi))
             for row in res:
                 sub_query = """
                     select count(*) 
@@ -276,4 +282,3 @@ def student_view_jafs():
 @student_blueprint.route('/student/sign_jaf', methods=['GET'])
 @swag_from('docs/student_sign_jaf.yml')
 def student_sign_jaf():
-    
