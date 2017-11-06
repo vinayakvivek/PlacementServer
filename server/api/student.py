@@ -235,7 +235,6 @@ def student_view_jafs():
             dept_id = int(res[0])
             cpi = float(res[1])
 
-
             query = """
                     select
                         company.name,
@@ -251,21 +250,21 @@ def student_view_jafs():
             res = conn.execute(query, (dept_id, cpi))
             for row in res:
                 sub_query = """
-                    select count(*) 
+                    select count(*)
                     from signedjafs
                     where rollno = %s
                         and company_id = %s
                         and jaf_no = %s
                     """
                 res = list(conn.execute(sub_query, (rollno, int(row[6]), int(row[1]))).first())
-                is_signedup = False if res[0] == 0 else True 
+                is_signedup = False if res[0] == 0 else True
                 data.append({
-                        'company_name' : row[0],
-                        'jaf_no' : row[1],
-                        'jaf_name' : row[2],
-                        'description' : row[3],
-                        'stipend' : row[4],
-                        'cpi_cutoff' : float(row[5]),
+                        'company_name': row[0],
+                        'jaf_no': row[1],
+                        'jaf_name': row[2],
+                        'description': row[3],
+                        'stipend': row[4],
+                        'cpi_cutoff': float(row[5]),
                         'signedup': is_signedup
                     })
             status = "true"
@@ -279,6 +278,8 @@ def student_view_jafs():
         'status': status
     })
 
-@student_blueprint.route('/student/sign_jaf', methods=['GET'])
+
+@student_blueprint.route('/student/sign_jaf', methods=['POST'])
 @swag_from('docs/student_sign_jaf.yml')
 def student_sign_jaf():
+    pass
