@@ -36,6 +36,15 @@ responses:
     description: "Invalid input"
 
 definitions:
+  Department:
+    type: "object"
+    properties:
+      dept_id:
+        example: 1
+        type: "integer"
+      name:
+        example: "CSE"
+        type: "string"
   JAF:
     type: "object"
     properties:
@@ -54,3 +63,7 @@ definitions:
       cpi_cutoff:
         example: 9.00
         type: "number"
+      eligible_departments:
+        type: "array"
+        items:
+          - $ref: '#/definitions/Department'

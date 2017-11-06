@@ -1,0 +1,56 @@
+Company JAFs endpoint
+---
+tags:
+- "company"
+summary: "Company JAFs"
+description: ""
+operationId: "company_view_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "Company JAF data"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "status"
+          example: "true"
+        data:
+          $ref: "#/definitions/CompanyJAFs"
+  405:
+    description: "Invalid input"
+
+definitions:
+  CompanyJAFs:
+    type: "array"
+    items:
+      - $ref: '#/definitions/JAF'
+
+  # CompanyJAF:
+  #   type: "object"
+  #   properties:
+  #     jaf_no:
+  #       example: 2
+  #       type: "integer"
+  #     jaf_name:
+  #       example: "JAF name"
+  #       type: "string"
+  #     description:
+  #       example: "example JAF description"
+  #       type: "string"
+  #     stipend:
+  #       example: 20000
+  #       type: "integer"
+  #     cpi_cutoff:
+  #       example: 9.00
+  #       type: "number"
+  #     eligible_departments:
+  #       type: "array"
+  #       items:
+  #         - $ref: '#/definitions/Department'
