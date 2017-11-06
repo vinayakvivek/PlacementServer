@@ -25,4 +25,14 @@ insert into company values(nextval('company_id'),'apple','app@gmail.com','compan
 
 insert into time_slot values(nextval('time_slot_id'),TIMESTAMP '2011-05-16 15:36:38', TIMESTAMP '2011-05-16 20:36:38');
 
-insert into jaf values(1,1,'TestJaf','Intern',10000,9.00,1,1);
+insert into jaf values(1,1,'TestJaf1','Intern',10000,9.00,1,1);
+insert into jaf values(2,2,'TestJaf2','Intern',10000,8.00,1,2);
+insert into jaf values(3,1,'TestJaf3','Intern',10000,7.00,1,3);
+insert into jaf values(4,1,'TestJaf4','Intern',10000,6.00,1,1);
+insert into jaf values(1,2,'TestJaf5','Intern',10000,8.50,1,1);
+
+insert into eligibility values(1,1,1);
+insert into eligibility values(1,1,2);
+insert into eligibility values(2,2,1);
+insert into eligibility values(3,1,2);
+

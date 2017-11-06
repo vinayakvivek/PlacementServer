@@ -1,3 +1,4 @@
+drop table if exists eligibility;
 drop table if exists jaf;
 drop table if exists time_slot;
 drop table if exists resume;
@@ -87,4 +88,18 @@ CREATE TABLE jaf(
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
+CREATE TABLE eligibility(
+    company_id INT,
+    jaf_no INT,
+    dept_id INT,
+    PRIMARY KEY (company_id,jaf_no,dept_id),
+    FOREIGN KEY (company_id, jaf_no) references jaf(company_id,jaf_no)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY (dept_id) references department(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
 
