@@ -1,3 +1,4 @@
+drop table if exists signedjafs;
 drop table if exists eligibility;
 drop table if exists jaf;
 drop table if exists time_slot;
@@ -98,6 +99,21 @@ CREATE TABLE eligibility(
     ON DELETE CASCADE
     ON UPDATE CASCADE,
     FOREIGN KEY (dept_id) references department(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE signedjafs(
+  rollno VARCHAR(10),
+  company_id INT,
+  jaf_no INT,
+  is_shortlisted boolean DEFAULT '0',
+  date_signed timestamp DEFAULT current_timestamp,
+  PRIMARY KEY(rollno,company_id,jaf_no),
+  FOREIGN KEY (company_id, jaf_no) references jaf(company_id,jaf_no)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  FOREIGN KEY (rollno) references student(rollno)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
