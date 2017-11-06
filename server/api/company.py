@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import jsonify, request, session
 from flasgger import swag_from
 
-from app import conn
+from server import conn
 
 company_blueprint = Blueprint('company_blueprint', __name__)
 
