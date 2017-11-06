@@ -47,6 +47,9 @@ definitions:
       cpi_cutoff:
         example: 9.00
         type: "number"
+      signedup: 
+        example: false
+        type: "boolean"
   JAF2:
     type: "object"
     properties:
@@ -68,9 +71,12 @@ definitions:
       cpi_cutoff:
         example: 8.00
         type: "number"
+      signedup: 
+        example: true
+        type: "boolean"
   JAFS:
     type: "array"
     items:
-      $ref: "#/definitions/JAF1"
-      $ref: "#/definitions/JAF2"
+      - $ref: "#/definitions/JAF1"
+      - $ref: "#/definitions/JAF2"
 

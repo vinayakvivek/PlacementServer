@@ -36,3 +36,5 @@ insert into eligibility values(1,1,2);
 insert into eligibility values(2,2,1);
 insert into eligibility values(3,1,2);
 
+insert into signedjafs(rollno,company_id,jaf_no) values('1',1, 1);
+insert into signedjafs(rollno,company_id,jaf_no) values('1',2, 2);
