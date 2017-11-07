@@ -31,8 +31,9 @@ def student():
         res = list(conn.execute(query, (rollno, )).first())
         data = {
             'name': res[0],
+            'rollno': rollno,
             'cpi': float(res[1]),
-            'dept': res[2]
+            'dept_name': res[2]
         }
         status = "true"
 

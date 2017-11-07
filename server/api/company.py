@@ -61,10 +61,10 @@ def company():
                     from company
                     where id = %s
                     """
-            res = list(conn.execute(query,(company_id, )).first())
+            res = list(conn.execute(query, (company_id, )).first())
             data = {
-                'name':res[0],
-                'email':res[1]
+                'name': res[0],
+                'email': res[1]
             }
             status = "true"
         except:
