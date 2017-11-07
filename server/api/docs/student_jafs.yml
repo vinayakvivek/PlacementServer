@@ -47,9 +47,12 @@ definitions:
       cpi_cutoff:
         example: 9.00
         type: "number"
-      signedup: 
+      signedup:
         example: false
         type: "boolean"
+      company_id:
+        example: 2
+        type: "integer"
   JAF2:
     type: "object"
     properties:
@@ -71,9 +74,12 @@ definitions:
       cpi_cutoff:
         example: 8.00
         type: "number"
-      signedup: 
+      signedup:
         example: true
         type: "boolean"
+      company_id:
+        example: 2
+        type: "integer"
   JAFS:
     type: "array"
     items:

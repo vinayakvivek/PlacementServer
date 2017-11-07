@@ -239,7 +239,8 @@ def student_view_jafs():
             query = """
                     select
                         company.name,
-                        jaf_no, jaf.name,
+                        jaf_no,
+                        jaf.name,
                         description,
                         stipend,
                         cpi_cutoff,
@@ -267,7 +268,8 @@ def student_view_jafs():
                         'description': row[3],
                         'stipend': row[4],
                         'cpi_cutoff': float(row[5]),
-                        'signedup': is_signedup
+                        'signedup': is_signedup,
+                        'company_id': int(row[6])
                     })
             status = "true"
 
