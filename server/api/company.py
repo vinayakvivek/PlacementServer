@@ -209,6 +209,79 @@ def comapany_view_jafs():
     })
 
 
+@company_blueprint.route('/company/jaf', methods=['GET'])
+@swag_from('docs/company_jaf_details.yml')
+def comapany_view_jaf_details():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 2:
+        # logged in user is not a company
+        status = "false"
+        data = "User is not a company"
+    else:
+        company_id = session['username']
+
+        try:
+            request_data = request.get_json()
+            jaf_no = int(request_data['jaf_no'])
+
+            query = """
+                select count(*)
+                from jaf
+                where company_id = %s and jaf_no = %s
+                """
+            res = list(conn.execute(query, (company_id, jaf_no)))
+            if (res[0] == 1):
+                query = """
+                    select
+                        jaf_no,
+                        name,
+                        description,
+                        stipend,
+                        cpi_cutoff
+                    from jaf
+                    where company_id = %s and jaf_no = %s
+                    """
+                res = list(conn.execute(query, (company_id, jaf_no)).first())
+                eligible_departments = []
+                sub_query = """
+                    select id, name
+                    from eligibility join department on dept_id = id
+                    where company_id = %s
+                        and jaf_no = %s
+                    """
+                sub_res = conn.execute(sub_query, (company_id, jaf_no))
+                for dept in sub_res:
+                    eligible_departments.append({
+                            'dept_id': int(dept[0]),
+                            'name': dept[1]
+                        })
+
+                data = {
+                    'jaf_no': jaf_no,
+                    'jaf_name': res[1],
+                    'description': res[2],
+                    'stipend': res[3],
+                    'cpi_cutoff': float(res[4]),
+                    'eligible_departments': eligible_departments
+                }
+            else:
+                status = "false"
+                data = "JAF does not exists"
+        except:
+            status = "false"
+            data = "database error"
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
 @company_blueprint.route('/company/jaf/students', methods=['POST'])
 @swag_from('docs/company_signed_students.yml')
 def comapany_view_signed_students():

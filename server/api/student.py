@@ -344,3 +344,9 @@ def student_sign_jaf():
         'data': data,
         'status': status
     })
+
+
+@student_blueprint.route('/student/jaf', methods=['POST'])
+@swag_from('docs/student_view_jaf.yml')
+def student_view_jaf():
+    pass

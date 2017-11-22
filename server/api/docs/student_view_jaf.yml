@@ -1,10 +1,10 @@
-Company Add JAF endpoint
+student JAFs endpoint
 ---
 tags:
-- "company"
-summary: "Add JAF request"
+- "student"
+summary: "student view JAF details"
 description: ""
-operationId: "company_add_jaf"
+operationId: "student_view_jaf"
 consumes:
 - "application/json"
 produces:
@@ -12,13 +12,20 @@ produces:
 parameters:
 - in: "body"
   name: "body"
-  description: "add jaf request"
+  description: "Register request"
   required: true
   schema:
-    $ref: "#/definitions/JAF"
+    type: "object"
+    properties:
+      jaf_no:
+        example: 1
+        type: "integer"
+      company_id:
+        example: 1
+        type: "integer"
 responses:
   200:
-    description: "Login status"
+    description: "JAF data"
     content:
       application/json:
     schema:
@@ -26,28 +33,19 @@ responses:
       properties:
         status:
           type: "string"
-          description: "JAF insertion status"
+          description: "status"
           example: "true"
         data:
-          example: "successfully added new JAF"
-          type: "string"
-          description: "error if status is false"
+          $ref: "#/definitions/sJAF"
   405:
     description: "Invalid input"
-
 definitions:
-  Department:
+  sJAF:
     type: "object"
     properties:
-      dept_id:
+      company_id:
         example: 1
         type: "integer"
-      name:
-        example: "CSE"
-        type: "string"
-  JAF:
-    type: "object"
-    properties:
       jaf_no:
         example: 2
         type: "integer"
