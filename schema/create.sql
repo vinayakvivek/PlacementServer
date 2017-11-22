@@ -80,6 +80,7 @@ CREATE TABLE jaf(
   cpi_cutoff NUMERIC(4,2),
   interview_slot_id INT,
   alloted_ic_id  INT,
+  is_verified boolean DEFAULT '0',
   PRIMARY KEY(company_id,jaf_no),
   FOREIGN KEY (company_id) references company(id)
     ON DELETE CASCADE

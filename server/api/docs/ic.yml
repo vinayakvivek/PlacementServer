@@ -1,0 +1,41 @@
+IC endpoint
+---
+tags:
+- "ic"
+summary: "IC Index Page"
+description: ""
+operationId: "ic"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "IC data"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "status"
+          example: "true"
+        data:
+          $ref: "#/definitions/IC"
+  405:
+    description: "Invalid input"
+
+definitions:
+  IC:
+    type: "object"
+    properties:
+      name:
+        example: "sample_ic"
+        type: "string"
+      rollno:
+        example: "1"
+        type: "string"
+      id:
+        example: 1
+        type: "integer"

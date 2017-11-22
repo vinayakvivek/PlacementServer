@@ -37,10 +37,12 @@ conn = engine.connect()
 from api.auth import auth_blueprint
 from api.student import student_blueprint
 from api.company import company_blueprint
+from api.ic import ic_blueprint
 
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(student_blueprint)
 app.register_blueprint(company_blueprint)
+app.register_blueprint(ic_blueprint)
 
 
 @app.route('/')
