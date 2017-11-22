@@ -209,7 +209,7 @@ def comapany_view_jafs():
     })
 
 
-@company_blueprint.route('/company/jaf', methods=['GET'])
+@company_blueprint.route('/company/jaf', methods=['POST'])
 @swag_from('docs/company_jaf_details.yml')
 def comapany_view_jaf_details():
     data = ""
@@ -235,7 +235,7 @@ def comapany_view_jaf_details():
                 where company_id = %s and jaf_no = %s
                 """
             res = list(conn.execute(query, (company_id, jaf_no)))
-            if (res[0] == 1):
+            if (res[0][0] == 1):
                 query = """
                     select
                         jaf_no,
@@ -272,9 +272,9 @@ def comapany_view_jaf_details():
             else:
                 status = "false"
                 data = "JAF does not exists"
-        except:
+        except Exception as e:
             status = "false"
-            data = "database error"
+            data = str(e)
 
     return jsonify({
         'data': data,

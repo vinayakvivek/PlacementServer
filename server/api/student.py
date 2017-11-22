@@ -349,4 +349,73 @@ def student_sign_jaf():
 @student_blueprint.route('/student/jaf', methods=['POST'])
 @swag_from('docs/student_view_jaf.yml')
 def student_view_jaf():
-    pass
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        try:
+            request_data = request.get_json()
+            jaf_no = int(request_data['jaf_no'])
+            company_id = int(request_data['company_id'])
+
+            print(company_id)
+            print(jaf_no)
+
+            query = """
+                select count(*)
+                from jaf
+                where company_id = %s and jaf_no = %s
+                """
+            res = list(conn.execute(query, (company_id, jaf_no)))
+            if (res[0][0] == 1):
+                query = """
+                    select
+                        jaf_no,
+                        name,
+                        description,
+                        stipend,
+                        cpi_cutoff
+                    from jaf
+                    where company_id = %s and jaf_no = %s
+                    """
+                res = list(conn.execute(query, (company_id, jaf_no)).first())
+                eligible_departments = []
+                sub_query = """
+                    select id, name
+                    from eligibility join department on dept_id = id
+                    where company_id = %s
+                        and jaf_no = %s
+                    """
+                sub_res = conn.execute(sub_query, (company_id, jaf_no))
+                for dept in sub_res:
+                    eligible_departments.append({
+                            'dept_id': int(dept[0]),
+                            'name': dept[1]
+                        })
+
+                data = {
+                    'jaf_no': jaf_no,
+                    'jaf_name': res[1],
+                    'description': res[2],
+                    'stipend': res[3],
+                    'cpi_cutoff': float(res[4]),
+                    'eligible_departments': eligible_departments
+                }
+            else:
+                status = "false"
+                data = "JAF does not exists"
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
