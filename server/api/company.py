@@ -96,7 +96,7 @@ def add_jaf():
 
         try:
             jaf_no = int(request_data['jaf_no'])
-            name = request_data['name']
+            name = request_data['jaf_name']
             description = request_data['description']
             stipend = request_data['stipend']
             cpi_cutoff = request_data['cpi_cutoff']
@@ -114,12 +114,32 @@ def add_jaf():
                 status = "false"
                 data = "JAF already exists"
             else:
+                # get IC with lowest no of jafs alloted to him/her
+                query = """
+                    with ic_jaf_count as
+                      (select alloted_ic_id, count(*) as jaf_count
+                       from jaf
+                       group by alloted_ic_id
+                       order by jaf_count asc)
+                    select ic.id, rollno,
+                        case
+                          when jaf_count IS null then 0
+                          else jaf_count
+                        end
+                    from ic left outer join ic_jaf_count
+                        on ic.id = ic_jaf_count.alloted_ic_id
+                    order by jaf_count asc
+                    limit 1
+                    """
+
+                res = list(conn.execute(query).first())
+
                 query = """
                     insert into
-                    jaf(company_id, jaf_no, name, description, stipend, cpi_cutoff)
-                    values(%s, %s, %s, %s, %s, %s)
+                    jaf(company_id, jaf_no, name, description, stipend, cpi_cutoff, alloted_ic_id)
+                    values(%s, %s, %s, %s, %s, %s, %s)
                     """
-                conn.execute(query, (company_id, jaf_no, name, description, stipend, cpi_cutoff, ))
+                conn.execute(query, (company_id, jaf_no, name, description, stipend, cpi_cutoff, int(res[0])))
 
                 query = """
                     insert into
