@@ -1,0 +1,26 @@
+IC JAFS endpoint
+---
+tags:
+- "ic"
+summary: "View Jafs"
+description: ""
+operationId: "ic_view_alloted_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "View alloted JAFS"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "true"
+        data:
+          $ref: "#/definitions/icJAFS"
+  405:
+    description: "Invalid input"

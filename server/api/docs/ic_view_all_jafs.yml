@@ -50,6 +50,9 @@ definitions:
       cpi_cutoff:
         example: 9.00
         type: "number"
+      is_verified:
+        example: false
+        type: "boolean"
       eligible_departments:
         type: "array"
         items:
@@ -78,6 +81,9 @@ definitions:
       cpi_cutoff:
         example: 8.00
         type: "number"
+      is_verified:
+        example: true
+        type: "boolean"
       eligible_departments:
         type: "array"
         items:
