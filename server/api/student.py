@@ -360,6 +360,7 @@ def student_view_jaf():
         status = "false"
         data = "User is not a student"
     else:
+        rollno = session['username']
         try:
             request_data = request.get_json()
             jaf_no = int(request_data['jaf_no'])
@@ -399,6 +400,16 @@ def student_view_jaf():
                             'name': dept[1]
                         })
 
+                sub_query = """
+                    select count(*)
+                    from signedjafs
+                    where rollno = %s
+                        and company_id = %s
+                        and jaf_no = %s
+                    """
+                res2 = list(conn.execute(sub_query, (rollno, company_id, jaf_no)).first())
+                is_signedup = False if res2[0] == 0 else True
+
                 data = {
                     'jaf_no': jaf_no,
                     'jaf_name': res[1],
@@ -407,6 +418,7 @@ def student_view_jaf():
                     'cpi_cutoff': float(res[4]),
                     'company_id': company_id,
                     'company_name': res[5],
+                    'signedup': is_signedup,
                     'eligible_departments': eligible_departments
                 }
             else:

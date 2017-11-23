@@ -64,6 +64,9 @@ definitions:
       cpi_cutoff:
         example: 9.00
         type: "number"
+      signedup:
+        example: false
+        type: "boolean"
       eligible_departments:
         type: "array"
         items:
