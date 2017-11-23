@@ -273,8 +273,8 @@ def student_view_jafs():
                     })
             status = "true"
 
-        except:
-            data = "database error"
+        except Exception as e:
+            data = str(e)
             status = "false"
 
     return jsonify({
@@ -336,8 +336,62 @@ def student_sign_jaf():
                 data = "JAF already signed"
                 status = "false"
 
-        except:
-            data = "database error"
+        except Exception as e:
+            data = str(e)
+            status = "false"
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
+@student_blueprint.route('/student/signout_jaf', methods=['POST'])
+@swag_from('docs/student_signout_jaf.yml')
+def student_signout_jaf():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        try:
+            rollno = session['username']
+            request_data = request.get_json()
+            company_id = request_data['company_id']
+            jaf_no = request_data['jaf_no']
+
+            query = """
+                    select count(*)
+                    from signedjafs
+                    where company_id = %s
+                        and jaf_no = %s
+                        and rollno = %s
+                    """
+            res = list(conn.execute(query, (company_id, jaf_no, rollno)).first())
+            if res[0] == 1:
+                # delete from signedjafs
+                query = """
+                    delete
+                    from signedjafs
+                    where rollno = %s and
+                        company_id = %s and
+                        jaf_no = %s
+                    """
+                conn.execute(query, (rollno, company_id, jaf_no))
+                data = "JAF unsigned"
+                status = "true"
+            else:
+                data = "JAF not signed"
+                status = "false"
+
+        except Exception as e:
+            data = str(e)
             status = "false"
 
     return jsonify({

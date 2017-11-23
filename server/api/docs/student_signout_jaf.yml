@@ -1,0 +1,45 @@
+SignoutJaf endpoint
+---
+tags:
+- "student"
+summary: "SignoutJaf"
+description: ""
+operationId: "sign"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "signout JAF request"
+  required: true
+  schema:
+    $ref: "#/definitions/Jaf"
+responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "true"
+        data:
+          example: "Signed"
+          type: "string"
+  405:
+    description: "Invalid input"
+
+definitions:
+  Jaf:
+    type: "object"
+    properties:
+      company_id:
+        example: 1
+        type: "integer"
+      jaf_no:
+        example: 1
+        type: "integer"
