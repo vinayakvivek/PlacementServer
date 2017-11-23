@@ -1,0 +1,90 @@
+IC JAFS endpoint
+---
+tags:
+- "ic"
+summary: "View Jafs"
+description: ""
+operationId: "ic_view_all_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "View JAFS"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "true"
+        data:
+          $ref: "#/definitions/icJAFS"
+  405:
+    description: "Invalid input"
+
+definitions:
+  icJAF1:
+    type: "object"
+    properties:
+      company_id:
+        example: 1
+        type: "integer"
+      company_name:
+        example: "company1"
+        type: "string"
+      jaf_no:
+        example: 2
+        type: "integer"
+      jaf_name:
+        example: "JAF name"
+        type: "string"
+      description:
+        example: "example JAF description"
+        type: "string"
+      stipend:
+        example: 20000
+        type: "integer"
+      cpi_cutoff:
+        example: 9.00
+        type: "number"
+      eligible_departments:
+        type: "array"
+        items:
+          - $ref: '#/definitions/Department'
+  icJAF2:
+    type: "object"
+    properties:
+      company_id:
+        example: 3
+        type: "integer"
+      company_name:
+        example: "company1"
+        type: "string"
+      jaf_no:
+        example: 1
+        type: "integer"
+      jaf_name:
+        example: "JAF name2"
+        type: "string"
+      description:
+        example: "example JAF2 description"
+        type: "string"
+      stipend:
+        example: 40000
+        type: "integer"
+      cpi_cutoff:
+        example: 8.00
+        type: "number"
+      eligible_departments:
+        type: "array"
+        items:
+          - $ref: '#/definitions/Department'
+  icJAFS:
+    type: "array"
+    items:
+      - $ref: "#/definitions/icJAF1"
+      - $ref: "#/definitions/icJAF2"
+

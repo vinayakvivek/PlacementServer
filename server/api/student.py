@@ -322,10 +322,10 @@ def student_sign_jaf():
                 res = list(conn.execute(query, (company_id, jaf_no)).first())
                 if (res[0] == 1):
                     query = """
-                            insert into
-                            signedjafs(rollno, company_id, jaf_no)
-                            values(%s,%s,%s)
-                            """
+                        insert into
+                        signedjafs(rollno, company_id, jaf_no)
+                        values(%s, %s, %s)
+                        """
                     conn.execute(query, (rollno, company_id, jaf_no))
                     data = "JAF Signed"
                     status = "true"
