@@ -365,9 +365,6 @@ def student_view_jaf():
             jaf_no = int(request_data['jaf_no'])
             company_id = int(request_data['company_id'])
 
-            print(company_id)
-            print(jaf_no)
-
             query = """
                 select count(*)
                 from jaf
@@ -378,12 +375,14 @@ def student_view_jaf():
                 query = """
                     select
                         jaf_no,
-                        name,
+                        jaf.name,
                         description,
                         stipend,
-                        cpi_cutoff
-                    from jaf
-                    where company_id = %s and jaf_no = %s
+                        cpi_cutoff,
+                        company.name
+                    from jaf, company
+                    where jaf.company_id = company.id
+                        and company_id = %s and jaf_no = %s
                     """
                 res = list(conn.execute(query, (company_id, jaf_no)).first())
                 eligible_departments = []
@@ -406,6 +405,8 @@ def student_view_jaf():
                     'description': res[2],
                     'stipend': res[3],
                     'cpi_cutoff': float(res[4]),
+                    'company_id': company_id,
+                    'company_name': res[5],
                     'eligible_departments': eligible_departments
                 }
             else:

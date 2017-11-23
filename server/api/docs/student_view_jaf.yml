@@ -46,6 +46,9 @@ definitions:
       company_id:
         example: 1
         type: "integer"
+      company_name:
+        example: "comp name"
+        type: "string"
       jaf_no:
         example: 2
         type: "integer"
