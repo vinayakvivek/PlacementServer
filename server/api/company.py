@@ -165,6 +165,85 @@ def add_jaf():
     })
 
 
+@company_blueprint.route('/company/editjaf', methods=['POST'])
+@swag_from('docs/company_edit_jaf.yml')
+def edit_jaf():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 2:
+        # logged in user is not a company
+        status = "false"
+        data = "User is not a company"
+    else:
+        company_id = session['username']
+        request_data = request.get_json()
+
+        try:
+            jaf_no = int(request_data['jaf_no'])
+            name = request_data['jaf_name']
+            description = request_data['description']
+            stipend = request_data['stipend']
+            cpi_cutoff = request_data['cpi_cutoff']
+            eligible_depts = request_data['eligible_departments']
+
+            # check if jaf_no already exist
+            # cannot edit once verified by IC
+            query = """
+                select count(*)
+                from jaf
+                where company_id = %s
+                    and jaf_no = %s
+                    and is_verified = false
+                """
+            res = list(conn.execute(query, (company_id, jaf_no, )).first())
+            if (res[0] == 0):
+                status = "false"
+                data = "JAF does not exist / already verified"
+            else:
+                query = """
+                    update jaf
+                    set name = %s,
+                        description = %s,
+                        stipend = %s ,
+                        cpi_cutoff = %s
+                    where company_id = %s
+                        and jaf_no = %s
+                    """
+                conn.execute(query, (name, description, stipend, cpi_cutoff, company_id, jaf_no))
+
+                # delete related entries in eligibility
+                query = """
+                    delete
+                    from eligibility
+                    where company_id = %s and jaf_no = %s
+                    """
+                conn.execute(query, (company_id, jaf_no))
+
+                query = """
+                    insert into
+                    eligibility
+                    values (%s, %s, %s)
+                    """
+                for dept in eligible_depts:
+                    conn.execute(query, (company_id, jaf_no, int(dept['dept_id'])))
+
+                status = "true"
+                data = "successfully updated JAF"
+
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
 @company_blueprint.route('/company/jafs', methods=['GET'])
 @swag_from('docs/company_jafs.yml')
 def comapany_view_jafs():

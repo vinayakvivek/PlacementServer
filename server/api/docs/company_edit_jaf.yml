@@ -1,0 +1,69 @@
+Company Add JAF endpoint
+---
+tags:
+- "company"
+summary: "edit JAF request"
+description: ""
+operationId: "company_edit_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "edit jaf request"
+  required: true
+  schema:
+    $ref: "#/definitions/JAF"
+responses:
+  200:
+    description: "edit JAF"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "JAF edit status"
+          example: "true"
+        data:
+          example: "successfully edited JAF"
+          type: "string"
+          description: "error if status is false"
+  405:
+    description: "Invalid input"
+
+definitions:
+  Department:
+    type: "object"
+    properties:
+      dept_id:
+        example: 1
+        type: "integer"
+      name:
+        example: "CSE"
+        type: "string"
+  JAF:
+    type: "object"
+    properties:
+      jaf_no:
+        example: 2
+        type: "integer"
+      jaf_name:
+        example: "JAF name"
+        type: "string"
+      description:
+        example: "example JAF description"
+        type: "string"
+      stipend:
+        example: 20000
+        type: "integer"
+      cpi_cutoff:
+        example: 9.00
+        type: "number"
+      eligible_departments:
+        type: "array"
+        items:
+          - $ref: '#/definitions/Department'
