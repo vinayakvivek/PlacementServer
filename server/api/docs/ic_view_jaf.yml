@@ -1,0 +1,73 @@
+IC JAF endpoint
+---
+tags:
+- "ic"
+summary: "JAF request"
+description: ""
+operationId: "ic_view_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "jaf request"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      company_id:
+        type: "integer"
+        example: 1
+      jaf_no:
+        example: 1
+        type: "integer"
+responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "JAF"
+          example: "true"
+        data:
+          $ref: "#/definitions/icJAF"
+  405:
+    description: "Invalid input"
+definitions:
+  icJAF:
+    type: "object"
+    properties:
+      company_id:
+        example: 1
+        type: "integer"
+      company_name:
+        example: "company1"
+        type: "string"
+      jaf_no:
+        example: 2
+        type: "integer"
+      jaf_name:
+        example: "JAF name"
+        type: "string"
+      description:
+        example: "example JAF description"
+        type: "string"
+      stipend:
+        example: 20000
+        type: "integer"
+      cpi_cutoff:
+        example: 9.00
+        type: "number"
+      is_verified:
+        example: false
+        type: "boolean"
+      eligible_departments:
+        type: "array"
+        items:
+          - $ref: '#/definitions/Department'

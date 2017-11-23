@@ -77,16 +77,26 @@ def ic_view_all_jafs():
             for row in res:
                 eligible_departments = []
                 sub_query = """
-                    select id, name
-                    from eligibility join department on dept_id = id
-                    where company_id = %s
-                        and jaf_no = %s
+                    with ed as
+                      (
+                        select id, name, true as is_eligible
+                        from eligibility join department on dept_id = id
+                        where company_id = %s
+                            and jaf_no = %s
+                      )
+                    select id, name,
+                      case
+                        when is_eligible IS null then false
+                        else is_eligible
+                      end
+                    from department natural left join ed
                     """
                 sub_res = conn.execute(sub_query, (int(row[0]), int(row[1])))
                 for dept in sub_res:
                     eligible_departments.append({
                             'dept_id': int(dept[0]),
-                            'name': dept[1]
+                            'name': dept[1],
+                            'is_eligible': dept[2]
                         })
 
                 data.append({
@@ -126,7 +136,7 @@ def ic_view_alloted_jafs():
         status = "false"
         data = "User is not an IC"
     else:
-        ic_id = session['username']
+        ic_id = int(session['username'])
 
         try:
             query = """
@@ -151,16 +161,26 @@ def ic_view_alloted_jafs():
             for row in res:
                 eligible_departments = []
                 sub_query = """
-                    select id, name
-                    from eligibility join department on dept_id = id
-                    where company_id = %s
-                        and jaf_no = %s
+                    with ed as
+                      (
+                        select id, name, true as is_eligible
+                        from eligibility join department on dept_id = id
+                        where company_id = %s
+                            and jaf_no = %s
+                      )
+                    select id, name,
+                      case
+                        when is_eligible IS null then false
+                        else is_eligible
+                      end
+                    from department natural left join ed
                     """
                 sub_res = conn.execute(sub_query, (int(row[0]), int(row[1])))
                 for dept in sub_res:
                     eligible_departments.append({
                             'dept_id': int(dept[0]),
-                            'name': dept[1]
+                            'name': dept[1],
+                            'is_eligible': dept[2]
                         })
 
                 data.append({
@@ -175,6 +195,94 @@ def ic_view_alloted_jafs():
                         'eligible_departments': eligible_departments
                     })
 
+            status = "true"
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
+@ic_blueprint.route('/ic/jaf', methods=['POST'])
+@swag_from('docs/ic_view_jaf.yml')
+def ic_view_jaf():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 1:
+        # logged in user is not an IC
+        status = "false"
+        data = "User is not an IC"
+    else:
+        ic_id = int(session['username'])
+
+        try:
+            request_data = request.get_json()
+            company_id = int(request_data['company_id'])
+            jaf_no = int(request_data['jaf_no'])
+
+            query = """
+                with jafs as
+                    (select *
+                     from jaf
+                     where alloted_ic_id = %s)
+                select
+                    company.id,
+                    jaf_no,
+                    jafs.name,
+                    description,
+                    stipend,
+                    cpi_cutoff,
+                    company.name,
+                    is_verified
+                from jafs, company
+                where jafs.company_id = company.id
+                    and jaf_no = %s
+                    and company_id = %s
+                """
+            res = list(conn.execute(query, (ic_id, jaf_no, company_id)).first())
+
+            eligible_departments = []
+            sub_query = """
+                with ed as
+                  (
+                    select id, name, true as is_eligible
+                    from eligibility join department on dept_id = id
+                    where company_id = %s
+                        and jaf_no = %s
+                  )
+                select id, name,
+                  case
+                    when is_eligible IS null then false
+                    else is_eligible
+                  end
+                from department natural left join ed
+                """
+            sub_res = conn.execute(sub_query, (int(res[0]), int(res[1])))
+            for dept in sub_res:
+                eligible_departments.append({
+                        'dept_id': int(dept[0]),
+                        'name': dept[1],
+                        'is_eligible': dept[2]
+                    })
+
+            data = {
+                    'company_id': res[0],
+                    'company_name': res[6],
+                    'jaf_no': res[1],
+                    'jaf_name': res[2],
+                    'description': res[3],
+                    'stipend': res[4],
+                    'cpi_cutoff': float(res[5]),
+                    'is_verified': res[7],
+                    'eligible_departments': eligible_departments
+                }
             status = "true"
         except Exception as e:
             status = "false"

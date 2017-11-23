@@ -406,6 +406,7 @@ def comapany_view_jaf_details():
                     'is_verified': res[5],
                     'eligible_departments': eligible_departments
                 }
+                status = "true"
             else:
                 status = "false"
                 data = "JAF does not exists"
@@ -473,9 +474,62 @@ def comapany_view_signed_students():
             else:
                 status = "false"
                 data = "JAF does not exists"
-        except KeyError:
+
+        except Exception as e:
             status = "false"
-            data = "bad request"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
+@company_blueprint.route('/company/jaf/shortlist', methods=['POST'])
+@swag_from('docs/company_shortlist_student.yml')
+def shortlist_student():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 2:
+        # logged in user is not a company
+        status = "false"
+        data = "User is not a company"
+    else:
+        company_id = session['username']
+
+        try:
+            request_data = request.get_json()
+            jaf_no = int(request_data['jaf_no'])
+            rollno = request_data['rollno']
+
+            # check if student signed jaf exists
+            query = """
+                select count(*)
+                from signedjafs
+                where company_id = %s
+                    and jaf_no = %s
+                    and rollno = %s
+                """
+            res = list(conn.execute(query, (company_id, jaf_no, rollno)).first())
+            if (res[0] == 1):
+                query = """
+                    update signedjafs
+                    set is_shortlisted = true
+                    where company_id = %s
+                        and jaf_no = %s
+                        and rollno = %s
+                    """
+                conn.execute(query, (company_id, jaf_no, rollno))
+                status = "true"
+                data = "successfully shortlisted student"
+            else:
+                status = "false"
+                data = "student hasn't signed up JAF"
+
         except Exception as e:
             status = "false"
             data = str(e)
