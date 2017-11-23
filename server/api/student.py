@@ -488,3 +488,27 @@ def student_view_jaf():
         'data': data,
         'status': status
     })
+
+
+@student_blueprint.route('/departments', methods=['GET'])
+def departments():
+    data = ""
+    status = ""
+
+    query = """
+        select *
+        from department
+        """
+    res = conn.execute(query)
+
+    data = []
+    for row in res:
+        data.append({
+                'dept_id': row[0],
+                'name': row[1]
+            })
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })

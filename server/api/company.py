@@ -7,6 +7,21 @@ from server import conn
 company_blueprint = Blueprint('company_blueprint', __name__)
 
 
+def get_departments():
+    query = """
+        select *
+        from department
+        """
+    res = conn.execute(query)
+    data = []
+    for row in res:
+        data.append({
+                'dept_id': row[0],
+                'name': row[1]
+            })
+    return res
+
+
 @company_blueprint.route('/company/register', methods=['POST'])
 @swag_from('docs/company_register.yml')
 def company_register():
@@ -275,16 +290,27 @@ def comapany_view_jafs():
             for row in res:
                 eligible_departments = []
                 sub_query = """
-                    select id, name
-                    from eligibility join department on dept_id = id
-                    where company_id = %s
-                        and jaf_no = %s
+                    with ed as
+                      (
+                        select id, name, true as is_eligible
+                        from eligibility join department on dept_id = id
+                        where company_id = %s
+                            and jaf_no = %s
+                      )
+                    select id, name,
+                      case
+                        when is_eligible IS null then false
+                        else is_eligible
+                      end
+                    from department natural left join ed
                     """
+
                 sub_res = conn.execute(sub_query, (company_id, int(row[0])))
                 for dept in sub_res:
                     eligible_departments.append({
                             'dept_id': int(dept[0]),
-                            'name': dept[1]
+                            'name': dept[1],
+                            'is_eligible': dept[2]
                         })
 
                 data.append({
@@ -349,16 +375,26 @@ def comapany_view_jaf_details():
                 res = list(conn.execute(query, (company_id, jaf_no)).first())
                 eligible_departments = []
                 sub_query = """
-                    select id, name
-                    from eligibility join department on dept_id = id
-                    where company_id = %s
-                        and jaf_no = %s
+                    with ed as
+                      (
+                        select id, name, true as is_eligible
+                        from eligibility join department on dept_id = id
+                        where company_id = %s
+                            and jaf_no = %s
+                      )
+                    select id, name,
+                      case
+                        when is_eligible IS null then false
+                        else is_eligible
+                      end
+                    from department natural left join ed
                     """
                 sub_res = conn.execute(sub_query, (company_id, jaf_no))
                 for dept in sub_res:
                     eligible_departments.append({
                             'dept_id': int(dept[0]),
-                            'name': dept[1]
+                            'name': dept[1],
+                            'is_eligible': dept[2]
                         })
 
                 data = {
