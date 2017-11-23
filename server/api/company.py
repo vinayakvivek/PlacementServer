@@ -152,12 +152,10 @@ def add_jaf():
 
                 status = "true"
                 data = "successfully added new JAF"
-        except KeyError:
-            data = "bad request"
+
+        except Exception as e:
             status = "false"
-        except:
-            status = "false"
-            data = "database error"
+            data = str(e)
 
     return jsonify({
         'data': data,
@@ -267,7 +265,8 @@ def comapany_view_jafs():
                     name,
                     description,
                     stipend,
-                    cpi_cutoff
+                    cpi_cutoff,
+                    is_verified
                 from jaf
                 where company_id = %s
                 """
@@ -294,13 +293,14 @@ def comapany_view_jafs():
                         'description': row[2],
                         'stipend': row[3],
                         'cpi_cutoff': float(row[4]),
+                        'is_verified': row[5],
                         'eligible_departments': eligible_departments
                     })
 
             status = "true"
-        except:
+        except Exception as e:
             status = "false"
-            data = "database error"
+            data = str(e)
 
     return jsonify({
         'data': data,
@@ -341,7 +341,8 @@ def comapany_view_jaf_details():
                         name,
                         description,
                         stipend,
-                        cpi_cutoff
+                        cpi_cutoff,
+                        is_verified
                     from jaf
                     where company_id = %s and jaf_no = %s
                     """
@@ -366,6 +367,7 @@ def comapany_view_jaf_details():
                     'description': res[2],
                     'stipend': res[3],
                     'cpi_cutoff': float(res[4]),
+                    'is_verified': res[5],
                     'eligible_departments': eligible_departments
                 }
             else:
@@ -438,9 +440,9 @@ def comapany_view_signed_students():
         except KeyError:
             status = "false"
             data = "bad request"
-        except:
+        except Exception as e:
             status = "false"
-            data = "database error"
+            data = str(e)
 
     return jsonify({
         'data': data,

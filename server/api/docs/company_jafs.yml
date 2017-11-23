@@ -30,27 +30,29 @@ definitions:
   CompanyJAFs:
     type: "array"
     items:
-      - $ref: '#/definitions/JAF'
-
-  # CompanyJAF:
-  #   type: "object"
-  #   properties:
-  #     jaf_no:
-  #       example: 2
-  #       type: "integer"
-  #     jaf_name:
-  #       example: "JAF name"
-  #       type: "string"
-  #     description:
-  #       example: "example JAF description"
-  #       type: "string"
-  #     stipend:
-  #       example: 20000
-  #       type: "integer"
-  #     cpi_cutoff:
-  #       example: 9.00
-  #       type: "number"
-  #     eligible_departments:
-  #       type: "array"
-  #       items:
-  #         - $ref: '#/definitions/Department'
+      - $ref: '#/definitions/vJAF'
+  vJAF:
+    type: "object"
+    properties:
+      jaf_no:
+        example: 2
+        type: "integer"
+      jaf_name:
+        example: "JAF name"
+        type: "string"
+      description:
+        example: "example JAF description"
+        type: "string"
+      stipend:
+        example: 20000
+        type: "integer"
+      cpi_cutoff:
+        example: 9.00
+        type: "number"
+      is_verified:
+        example: false
+        type: "boolean"
+      eligible_departments:
+        type: "array"
+        items:
+          - $ref: '#/definitions/Department'

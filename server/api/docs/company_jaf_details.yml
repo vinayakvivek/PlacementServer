@@ -12,7 +12,7 @@ produces:
 parameters:
 - in: "body"
   name: "body"
-  description: "Register request"
+  description: "JAF details request"
   required: true
   schema:
     type: "object"
@@ -33,6 +33,6 @@ responses:
           description: "status"
           example: "true"
         data:
-          $ref: "#/definitions/JAF"
+          $ref: "#/definitions/vJAF"
   405:
     description: "Invalid input"
