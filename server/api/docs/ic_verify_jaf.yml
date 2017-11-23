@@ -1,0 +1,43 @@
+IC verify JAF endpoint
+---
+tags:
+- "ic"
+summary: "verify JAF request"
+description: ""
+operationId: "ic_verify_jaf"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "verify jaf request"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      company_id:
+        type: "integer"
+        example: 1
+      jaf_no:
+        example: 1
+        type: "integer"
+responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "JAF verification status"
+          example: "true"
+        data:
+          example: "successfully verified"
+          type: "string"
+          description: "error if status is false"
+  405:
+    description: "Invalid input"

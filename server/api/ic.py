@@ -21,7 +21,7 @@ def ic():
         status = "false"
         data = "User is not an IC"
     else:
-        ic_id = session['username']
+        ic_id = int(session['username'])
         query = """
             select S.name, I.rollno
             from student as S, ic as I
@@ -176,6 +176,63 @@ def ic_view_alloted_jafs():
                     })
 
             status = "true"
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
+@ic_blueprint.route('/ic/verify', methods=['POST'])
+@swag_from('docs/ic_verify_jaf.yml')
+def ic_verify_jaf():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 1:
+        # logged in user is not an IC
+        status = "false"
+        data = "User is not an IC"
+    else:
+        ic_id = int(session['username'])
+
+        try:
+            request_data = request.get_json()
+            company_id = int(request_data['company_id'])
+            jaf_no = int(request_data['jaf_no'])
+
+            query = """
+                select alloted_ic_id, is_verified
+                from jaf
+                where company_id = %s
+                    and jaf_no = %s
+                """
+            res = list(conn.execute(query, (company_id, jaf_no)).first())
+
+            if (res[0] == ic_id):
+                if not res[1]:
+                    # verify, update jaf table
+                    query = """
+                        update jaf
+                        set is_verified = true
+                        where company_id = %s and jaf_no = %s
+                        """
+                    conn.execute(query, (company_id, jaf_no))
+                    status = "true"
+                    data = "verified successfully"
+                else:
+                    status = "false"
+                    data = "Already verified"
+            else:
+                status = "false"
+                data = "alloted IC is different."
+
         except Exception as e:
             status = "false"
             data = str(e)
