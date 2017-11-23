@@ -349,3 +349,56 @@ def ic_verify_jaf():
         'data': data,
         'status': status
     })
+
+
+@ic_blueprint.route('/ic/pending_resume', methods=['GET'])
+@swag_from('docs/ic_pending_resume.yml')
+def pending_resume_verification():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 1:
+        # logged in user is not an IC
+        status = "false"
+        data = "User is not an IC"
+    else:
+        try:
+            query = """
+                select rollno
+                from resume
+                where verified_ic is null;
+                """
+            students = conn.execute(query)
+
+            data = []
+            for row in students:
+                rollno = row[0]
+                sub_query = """
+                    select
+                        rollno,
+                        S.name,
+                        S.cpi,
+                        D.name
+                    from student as S, department as D
+                    where S.dept_id = D.id
+                        and S.rollno = %s
+                    """
+                res = list(conn.execute(sub_query, (rollno)).first())
+                data.append({
+                        'rollno': res[0],
+                        'name': res[1],
+                        'cpi': float(res[2]),
+                        'dept_name': res[3]
+                    })
+            status = "true"
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })

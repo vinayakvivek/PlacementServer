@@ -1,0 +1,32 @@
+IC pending resume endpoint
+---
+tags:
+- "ic"
+summary: "View list of pending resume"
+description: ""
+operationId: "ic_pending_resume"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "View"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "true"
+        data:
+          $ref: "#/definitions/icStuds"
+  405:
+    description: "Invalid input"
+
+definitions:
+  icStuds:
+    type: "array"
+    items:
+      - $ref: "#/definitions/Student"
