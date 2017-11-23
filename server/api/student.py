@@ -475,6 +475,8 @@ def student_view_jaf():
                     'signedup': is_signedup,
                     'eligible_departments': eligible_departments
                 }
+
+                status = "true"
             else:
                 status = "false"
                 data = "JAF does not exists"
