@@ -248,9 +248,10 @@ def student_view_jafs():
                     from jaf natural join eligibility
                             join company on company_id = company.id
                     where dept_id =%s
-                        and cpi_cutoff <= %s;
+                        and cpi_cutoff <= %s
+                    and is_verified = %s;
                     """
-            res = conn.execute(query, (dept_id, cpi))
+            res = conn.execute(query, (dept_id, cpi, True))
             for row in res:
                 sub_query = """
                     select count(*)
