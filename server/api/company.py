@@ -454,7 +454,9 @@ def comapany_view_signed_students():
                         cpi,
                         department.name,
                         is_shortlisted,
-                        date_signed
+                        date_signed,
+                        student.rollno,
+                        is_selected
                     from signedjafs natural join student, department
                     where company_id = %s
                         and jaf_no = %s
@@ -468,7 +470,9 @@ def comapany_view_signed_students():
                             'cpi': float(row[1]),
                             'dept': row[2],
                             'is_shortlisted': bool(row[3]),
-                            'date_signed': row[4]
+                            'date_signed': row[4],
+                            'rollno': row[5],
+                            'is_selected': row[6]
                         })
                 status = "true"
             else:
@@ -526,6 +530,60 @@ def shortlist_student():
                 conn.execute(query, (company_id, jaf_no, rollno))
                 status = "true"
                 data = "successfully shortlisted student"
+            else:
+                status = "false"
+                data = "student hasn't signed up JAF"
+
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+@company_blueprint.route('/company/jaf/select', methods=['POST'])
+@swag_from('docs/company_selected_student.yml')
+def select_student():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 2:
+        # logged in user is not a company
+        status = "false"
+        data = "User is not a company"
+    else:
+        company_id = session['username']
+
+        try:
+            request_data = request.get_json()
+            jaf_no = int(request_data['jaf_no'])
+            rollno = request_data['rollno']
+
+            # check if student signed jaf exists
+            query = """
+                select count(*)
+                from signedjafs
+                where company_id = %s
+                    and jaf_no = %s
+                    and rollno = %s
+                """
+            res = list(conn.execute(query, (company_id, jaf_no, rollno)).first())
+            if (res[0] == 1):
+                query = """
+                    update signedjafs
+                    set is_selected = true
+                    where company_id = %s
+                        and jaf_no = %s
+                        and rollno = %s
+                    """
+                conn.execute(query, (company_id, jaf_no, rollno))
+                status = "true"
+                data = "successfully selected student"
             else:
                 status = "false"
                 data = "student hasn't signed up JAF"

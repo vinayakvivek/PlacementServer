@@ -109,6 +109,7 @@ CREATE TABLE signedjafs(
   company_id INT,
   jaf_no INT,
   is_shortlisted boolean DEFAULT '0',
+  is_selected boolean DEFAULT '0',
   date_signed timestamp DEFAULT current_timestamp,
   PRIMARY KEY(rollno,company_id,jaf_no),
   FOREIGN KEY (company_id, jaf_no) references jaf(company_id,jaf_no)
