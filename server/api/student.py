@@ -540,6 +540,46 @@ def student_view_results():
     })
 
 
+
+@student_blueprint.route('/student/is_selected', methods=['GET'])
+def is_selected():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        rollno = session['username']
+        try:
+
+            query = """
+                select count(*)
+                from signedjafs
+                where rollno = %s
+                    and is_selected = true
+                """
+            res = list(conn.execute(query, (rollno)).first())
+            if res[0] == 1:
+                data = True
+            else:
+                data = False
+
+            status = "true"
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
 @student_blueprint.route('/departments', methods=['GET'])
 def departments():
     data = ""
