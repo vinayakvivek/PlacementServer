@@ -582,6 +582,12 @@ def select_student():
                         and rollno = %s
                     """
                 conn.execute(query, (company_id, jaf_no, rollno))
+                query1 = """
+                    delete from signedjafs
+                    where rollno = %s
+                        and is_selected = %s
+                    """
+                conn.execute(query1, (rollno,False))
                 status = "true"
                 data = "successfully selected student"
             else:
