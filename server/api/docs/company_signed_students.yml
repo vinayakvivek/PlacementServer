@@ -57,6 +57,12 @@ definitions:
         date_signed:
           example: "Mon, 06 Nov 2017 20:55:23 GMT"
           type: "string"
+        rollno:
+          example: "1"
+          type: "string"
+        is_selected:
+          example: false
+          type: "boolean"
   S2:
     schema:
       type: "object"
@@ -76,6 +82,12 @@ definitions:
         date_signed:
           example: "Tue, 07 Nov 2017 20:55:23 GMT"
           type: "string"
+        rollno:
+          example: "1"
+          type: "string"
+        is_selected:
+          example: false
+          type: "boolean"
   SignedStudents:
     type: "array"
     items:

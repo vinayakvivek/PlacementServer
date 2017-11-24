@@ -1,0 +1,43 @@
+Company shortlist student endpoint
+---
+tags:
+- "company"
+summary: "shortlist student request"
+description: ""
+operationId: "company_shortlist_student"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "select student request"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      jaf_no:
+        example: 1
+        type: "integer"
+      rollno:
+        example: "1"
+        type: "string"
+responses:
+  200:
+    description: "Login status"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          description: "select student status"
+          example: "true"
+        data:
+          example: "successfully selected student"
+          type: "string"
+          description: "error if status is false"
+  405:
+    description: "Invalid input"
