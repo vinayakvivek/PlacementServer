@@ -1,0 +1,47 @@
+student result endpoint
+---
+tags:
+- "student"
+summary: "View result"
+description: ""
+operationId: "company_view_result"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+responses:
+  200:
+    description: "View result"
+    content:
+      application/json:
+    schema:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "true"
+        data:
+          $ref: "#/definitions/results"
+  405:
+    description: "Invalid input"
+
+definitions:
+  result:
+    type: "object"
+    properties:
+      company_name:
+        example: "company1"
+        type: "string"
+      company_id:
+        example: 1
+        type: "integer"
+      jaf_no:
+        example: 2
+        type: "integer"
+      is_selected:
+        example: true
+        type: "boolean"
+  results:
+    type: "array"
+    items:
+      - $ref: "#/definitions/result"

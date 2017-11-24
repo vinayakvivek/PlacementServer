@@ -491,6 +491,55 @@ def student_view_jaf():
     })
 
 
+@student_blueprint.route('/student/result', methods=['GET'])
+@swag_from('docs/student_view_results.yml')
+def student_view_results():
+    data = ""
+    status = ""
+    if 'username' not in session:
+        # no user has logged in
+        status = "false"
+        data = "Invalid Session"
+    elif session['user_type'] != 0:
+        # logged in user is not a student
+        status = "false"
+        data = "User is not a student"
+    else:
+        rollno = session['username']
+        try:
+            query = """
+                select
+                  rollno,
+                  C.name,
+                  C.id,
+                  jaf_no,
+                  is_selected
+                from signedjafs as J, company as C
+                where J.company_id = C.id
+                  and rollno = %s
+                """
+            res = conn.execute(query, (rollno))
+
+            data = []
+            for row in res:
+                data.append({
+                        'company_name': row[1],
+                        'company_id': row[2],
+                        'jaf_no': row[3],
+                        'is_selected': row[4]
+                    })
+
+            status = "true"
+        except Exception as e:
+            status = "false"
+            data = str(e)
+
+    return jsonify({
+        'data': data,
+        'status': status
+    })
+
+
 @student_blueprint.route('/departments', methods=['GET'])
 def departments():
     data = ""
