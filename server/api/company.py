@@ -162,9 +162,8 @@ def add_jaf():
                     values (%s, %s, %s)
                     """
                 for dept in eligible_depts:
-                    # print(dept['dept_id'], dept['name'])
-                    conn.execute(query, (company_id, jaf_no, int(dept['dept_id'])))
-
+                     if (dept['is_eligible'] == True):
+                        conn.execute(query, (company_id, jaf_no, int(dept['dept_id'])))
                 status = "true"
                 data = "successfully added new JAF"
 
@@ -242,7 +241,8 @@ def edit_jaf():
                     values (%s, %s, %s)
                     """
                 for dept in eligible_depts:
-                    conn.execute(query, (company_id, jaf_no, int(dept['dept_id'])))
+                    if (dept['is_eligible'] == True):
+                        conn.execute(query, (company_id, jaf_no, int(dept['dept_id'])))
 
                 status = "true"
                 data = "successfully updated JAF"
